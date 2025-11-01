@@ -10,11 +10,13 @@ const marketRoutes = require('./routes/markets');
 const marketsAnalysisRoutes = require('./routes/marketsAnalysis');
 const backtestingRoutes = require('./routes/backtesting');
 const investmentRoutes = require('./routes/investment-calculator');
+const authRoutes = require('./routes/auth');
 
 app.use('/api/markets', marketRoutes);
 app.use('/api/marketsAnalysis', marketsAnalysisRoutes);
 app.use('/api/backtesting', backtestingRoutes);
 app.use('/api/investment', investmentRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get("/", function(req, res) {
   res.json({message: "Simplifi Backend is running!"});
