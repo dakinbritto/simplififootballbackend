@@ -1,45 +1,41 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
+const { Pool } = require('pg');
 const router = express.Router();
 
-// Simple file-based storage for testing (replace with database in production)
-const USERS_FILE = path.join(__dirname, '../data/users.json');
+// JWT Secret
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
-// JWT Secret (use environment variable in production)
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+// Database connection
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
-// Load users from file
-function loadUsers() {
+// Initialize database table
+async function initializeDatabase() {
   try {
-    if (fs.existsSync(USERS_FILE)) {
-      const data = fs.readFileSync(USERS_FILE, 'utf8');
-      return JSON.parse(data);
-    }
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        subscription_status VARCHAR(50) DEFAULT 'free',
+        stripe_customer_id VARCHAR(255),
+        query_count INTEGER DEFAULT 0,
+        last_query_reset TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log('Database table initialized');
   } catch (error) {
-    console.error('Error loading users:', error);
-  }
-  return [];
-}
-
-// Save users to file
-function saveUsers(users) {
-  try {
-    // Ensure data directory exists
-    const dataDir = path.dirname(USERS_FILE);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-  } catch (error) {
-    console.error('Error saving users:', error);
+    console.error('Database initialization error:', error);
   }
 }
 
-// Initialize users from file
-let users = loadUsers();
+// Initialize on startup
+initializeDatabase();
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -56,8 +52,8 @@ router.post('/register', async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = users.find(user => user.email === email);
-    if (existingUser) {
+    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existingUser.rows.length > 0) {
       return res.status(400).json({ success: false, error: 'User already exists' });
     }
 
@@ -66,26 +62,19 @@ router.post('/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Create user
-    const newUser = {
-      id: Date.now().toString(),
-      email,
-      passwordHash,
-      subscriptionStatus: 'free', // 'free', 'pro', 'cancelled'
-      stripeCustomerId: null,
-      createdAt: new Date(),
-      queryCount: 0, // Track free tier usage
-      lastQueryReset: new Date()
-    };
+    const result = await pool.query(
+      'INSERT INTO users (email, password_hash, subscription_status) VALUES ($1, $2, $3) RETURNING id, email, subscription_status, created_at',
+      [email, passwordHash, 'free']
+    );
 
-    users.push(newUser);
-    saveUsers(users); // PERSIST TO FILE
+    const newUser = result.rows[0];
 
     // Generate JWT token
     const token = jwt.sign(
       { 
         userId: newUser.id, 
         email: newUser.email,
-        subscriptionStatus: newUser.subscriptionStatus 
+        subscriptionStatus: newUser.subscription_status 
       },
       JWT_SECRET,
       { expiresIn: '7d' }
@@ -97,7 +86,7 @@ router.post('/register', async (req, res) => {
       user: {
         id: newUser.id,
         email: newUser.email,
-        subscriptionStatus: newUser.subscriptionStatus
+        subscriptionStatus: newUser.subscription_status
       }
     });
 
@@ -117,17 +106,16 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Email and password required' });
     }
 
-    // Reload users from file (in case another instance updated it)
-    users = loadUsers();
-
     // Find user
-    const user = users.find(u => u.email === email);
-    if (!user) {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
 
+    const user = result.rows[0];
+
     // Check password
-    const validPassword = await bcrypt.compare(password, user.passwordHash);
+    const validPassword = await bcrypt.compare(password, user.password_hash);
     if (!validPassword) {
       return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
@@ -137,7 +125,7 @@ router.post('/login', async (req, res) => {
       { 
         userId: user.id, 
         email: user.email,
-        subscriptionStatus: user.subscriptionStatus 
+        subscriptionStatus: user.subscription_status 
       },
       JWT_SECRET,
       { expiresIn: '7d' }
@@ -149,8 +137,8 @@ router.post('/login', async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        subscriptionStatus: user.subscriptionStatus,
-        queryCount: user.queryCount
+        subscriptionStatus: user.subscription_status,
+        queryCount: user.query_count
       }
     });
 
@@ -161,24 +149,23 @@ router.post('/login', async (req, res) => {
 });
 
 // Get user profile
-router.get('/profile', authenticateToken, (req, res) => {
+router.get('/profile', authenticateToken, async (req, res) => {
   try {
-    // Reload users from file
-    users = loadUsers();
-    
-    const user = users.find(u => u.id === req.user.userId);
-    if (!user) {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.userId]);
+    if (result.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
+
+    const user = result.rows[0];
 
     res.json({
       success: true,
       user: {
         id: user.id,
         email: user.email,
-        subscriptionStatus: user.subscriptionStatus,
-        queryCount: user.queryCount,
-        createdAt: user.createdAt
+        subscriptionStatus: user.subscription_status,
+        queryCount: user.query_count,
+        createdAt: user.created_at
       }
     });
 
@@ -207,32 +194,43 @@ function authenticateToken(req, res, next) {
 }
 
 // Middleware to check subscription status
-function requireSubscription(req, res, next) {
-  authenticateToken(req, res, (err) => {
-    if (err) return;
+async function requireSubscription(req, res, next) {
+  try {
+    // First authenticate
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    // Reload users from file
-    users = loadUsers();
-    
-    const user = users.find(u => u.id === req.user.userId);
-    if (!user) {
+    if (!token) {
+      return res.status(401).json({ success: false, error: 'Access token required' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+
+    // Get fresh user data from database
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [decoded.userId]);
+    if (result.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
 
+    const user = result.rows[0];
+
     // Check if free user has exceeded query limit
-    if (user.subscriptionStatus === 'free') {
+    if (user.subscription_status === 'free') {
       // Reset query count if it's a new day
       const today = new Date().toDateString();
-      const lastReset = new Date(user.lastQueryReset).toDateString();
+      const lastReset = new Date(user.last_query_reset).toDateString();
       
       if (today !== lastReset) {
-        user.queryCount = 0;
-        user.lastQueryReset = new Date();
-        saveUsers(users); // PERSIST CHANGES
+        await pool.query(
+          'UPDATE users SET query_count = 0, last_query_reset = CURRENT_TIMESTAMP WHERE id = $1',
+          [user.id]
+        );
+        user.query_count = 0;
       }
 
       // Check free tier limit (5 queries per day)
-      if (user.queryCount >= 5) {
+      if (user.query_count >= 5) {
         return res.status(403).json({ 
           success: false, 
           error: 'Free tier limit reached. Upgrade to Pro for unlimited access.',
@@ -241,19 +239,20 @@ function requireSubscription(req, res, next) {
       }
 
       // Increment query count
-      user.queryCount++;
-      saveUsers(users); // PERSIST CHANGES
+      await pool.query(
+        'UPDATE users SET query_count = query_count + 1 WHERE id = $1',
+        [user.id]
+      );
     }
 
     next();
-  });
+  } catch (error) {
+    console.error('Subscription check error:', error);
+    return res.status(403).json({ success: false, error: 'Invalid or expired token' });
+  }
 }
 
 // Export middleware functions
 module.exports = router;
 module.exports.authenticateToken = authenticateToken;
 module.exports.requireSubscription = requireSubscription;
-
-
-
-
