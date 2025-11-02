@@ -1,13 +1,45 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
-// In-memory users storage (replace with database later)
-let users = [];
+// Simple file-based storage for testing (replace with database in production)
+const USERS_FILE = path.join(__dirname, '../data/users.json');
 
 // JWT Secret (use environment variable in production)
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+
+// Load users from file
+function loadUsers() {
+  try {
+    if (fs.existsSync(USERS_FILE)) {
+      const data = fs.readFileSync(USERS_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Error loading users:', error);
+  }
+  return [];
+}
+
+// Save users to file
+function saveUsers(users) {
+  try {
+    // Ensure data directory exists
+    const dataDir = path.dirname(USERS_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (error) {
+    console.error('Error saving users:', error);
+  }
+}
+
+// Initialize users from file
+let users = loadUsers();
 
 // Register new user
 router.post('/register', async (req, res) => {
@@ -46,6 +78,7 @@ router.post('/register', async (req, res) => {
     };
 
     users.push(newUser);
+    saveUsers(users); // PERSIST TO FILE
 
     // Generate JWT token
     const token = jwt.sign(
@@ -83,6 +116,9 @@ router.post('/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email and password required' });
     }
+
+    // Reload users from file (in case another instance updated it)
+    users = loadUsers();
 
     // Find user
     const user = users.find(u => u.email === email);
@@ -127,6 +163,9 @@ router.post('/login', async (req, res) => {
 // Get user profile
 router.get('/profile', authenticateToken, (req, res) => {
   try {
+    // Reload users from file
+    users = loadUsers();
+    
     const user = users.find(u => u.id === req.user.userId);
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found' });
@@ -172,6 +211,9 @@ function requireSubscription(req, res, next) {
   authenticateToken(req, res, (err) => {
     if (err) return;
 
+    // Reload users from file
+    users = loadUsers();
+    
     const user = users.find(u => u.id === req.user.userId);
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found' });
@@ -186,6 +228,7 @@ function requireSubscription(req, res, next) {
       if (today !== lastReset) {
         user.queryCount = 0;
         user.lastQueryReset = new Date();
+        saveUsers(users); // PERSIST CHANGES
       }
 
       // Check free tier limit (5 queries per day)
@@ -199,6 +242,7 @@ function requireSubscription(req, res, next) {
 
       // Increment query count
       user.queryCount++;
+      saveUsers(users); // PERSIST CHANGES
     }
 
     next();
@@ -209,3 +253,7 @@ function requireSubscription(req, res, next) {
 module.exports = router;
 module.exports.authenticateToken = authenticateToken;
 module.exports.requireSubscription = requireSubscription;
+
+
+
+
