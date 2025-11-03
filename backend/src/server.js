@@ -6,12 +6,12 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Import and use secure routes (corrected paths)
-const marketRoutes = require('./src/routes/markets');
-const marketsAnalysisRoutes = require('./src/routes/marketsAnalysis');
-const backtestingRoutes = require('./src/routes/backtesting');
-const investmentRoutes = require('./src/routes/investment-calculator');
-const authRoutes = require('./src/routes/auth');
+// Import and use secure routes (corrected paths for running from src/ directory)
+const marketRoutes = require('./routes/markets');
+const marketsAnalysisRoutes = require('./routes/marketsAnalysis');
+const backtestingRoutes = require('./routes/backtesting');
+const investmentRoutes = require('./routes/investment-calculator');
+const authRoutes = require('./routes/auth');
 
 app.use('/api/markets', marketRoutes);
 app.use('/api/marketsAnalysis', marketsAnalysisRoutes);
