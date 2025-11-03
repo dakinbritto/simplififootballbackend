@@ -2,15 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
+
 app.use(cors());
 app.use(express.json());
 
-// Import and use secure routes
-const marketRoutes = require('./routes/markets');
-const marketsAnalysisRoutes = require('./routes/marketsAnalysis');
-const backtestingRoutes = require('./routes/backtesting');
-const investmentRoutes = require('./routes/investment-calculator');
-const authRoutes = require('./routes/auth');
+// Import and use secure routes (corrected paths)
+const marketRoutes = require('./src/routes/markets');
+const marketsAnalysisRoutes = require('./src/routes/marketsAnalysis');
+const backtestingRoutes = require('./src/routes/backtesting');
+const investmentRoutes = require('./src/routes/investment-calculator');
+const authRoutes = require('./src/routes/auth');
 
 app.use('/api/markets', marketRoutes);
 app.use('/api/marketsAnalysis', marketsAnalysisRoutes);
