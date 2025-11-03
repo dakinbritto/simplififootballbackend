@@ -1,44 +1,52 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-// JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
+// Simple file-based storage for testing (replace with database in production)
+const USERS_FILE = path.join(__dirname, '../data/users.json');
 
-// Create SQLite database
-const dbPath = path.join(__dirname, '../database.sqlite');
-const db = new sqlite3.Database(dbPath);
+// JWT Secret (use environment variable in production)
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
-// Initialize database table
-function initializeDatabase() {
-  db.serialize(() => {
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        subscription_status TEXT DEFAULT 'free',
-        stripe_customer_id TEXT,
-        query_count INTEGER DEFAULT 0,
-        last_query_reset DATETIME DEFAULT CURRENT_TIMESTAMP,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    console.log('SQLite database initialized');
-  });
+// Load users from file
+function loadUsers() {
+  try {
+    if (fs.existsSync(USERS_FILE)) {
+      const data = fs.readFileSync(USERS_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Error loading users:', error);
+  }
+  return [];
 }
 
-// Initialize on startup
-initializeDatabase();
+// Save users to file
+function saveUsers(users) {
+  try {
+    // Ensure data directory exists
+    const dataDir = path.dirname(USERS_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (error) {
+    console.error('Error saving users:', error);
+  }
+}
+
+// Initialize users from file
+let users = loadUsers();
 
 // Register new user
 router.post('/register', async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validation
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email and password required' });
     }
@@ -48,54 +56,49 @@ router.post('/register', async (req, res) => {
     }
 
     // Check if user already exists
-    db.get('SELECT id FROM users WHERE email = ?', [email], async (err, row) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ success: false, error: 'Database error' });
+    const existingUser = users.find(user => user.email === email);
+    if (existingUser) {
+      return res.status(400).json({ success: false, error: 'User already exists' });
+    }
+
+    // Hash password
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    // Create user
+    const newUser = {
+      id: Date.now().toString(),
+      email,
+      passwordHash,
+      subscriptionStatus: 'free', // 'free', 'pro', 'cancelled'
+      stripeCustomerId: null,
+      createdAt: new Date(),
+      queryCount: 0, // Track free tier usage
+      lastQueryReset: new Date()
+    };
+
+    users.push(newUser);
+    saveUsers(users); // PERSIST TO FILE
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        userId: newUser.id, 
+        email: newUser.email,
+        subscriptionStatus: newUser.subscriptionStatus 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        subscriptionStatus: newUser.subscriptionStatus
       }
-
-      if (row) {
-        return res.status(400).json({ success: false, error: 'User already exists' });
-      }
-
-      // Hash password
-      const saltRounds = 10;
-      const passwordHash = await bcrypt.hash(password, saltRounds);
-
-      // Create user
-      db.run(
-        'INSERT INTO users (email, password_hash, subscription_status) VALUES (?, ?, ?)',
-        [email, passwordHash, 'free'],
-        function(err) {
-          if (err) {
-            console.error('Database error:', err);
-            return res.status(500).json({ success: false, error: 'Registration failed' });
-          }
-
-          const userId = this.lastID;
-
-          // Generate JWT token
-          const token = jwt.sign(
-            { 
-              userId: userId, 
-              email: email,
-              subscriptionStatus: 'free' 
-            },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-          );
-
-          res.json({
-            success: true,
-            token,
-            user: {
-              id: userId,
-              email: email,
-              subscriptionStatus: 'free'
-            }
-          });
-        }
-      );
     });
 
   } catch (error) {
@@ -109,48 +112,46 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Validation
     if (!email || !password) {
       return res.status(400).json({ success: false, error: 'Email and password required' });
     }
 
+    // Reload users from file (in case another instance updated it)
+    users = loadUsers();
+
     // Find user
-    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ success: false, error: 'Database error' });
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+
+    // Check password
+    const validPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!validPassword) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        userId: user.id, 
+        email: user.email,
+        subscriptionStatus: user.subscriptionStatus 
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        subscriptionStatus: user.subscriptionStatus,
+        queryCount: user.queryCount
       }
-
-      if (!user) {
-        return res.status(401).json({ success: false, error: 'Invalid credentials' });
-      }
-
-      // Check password
-      const validPassword = await bcrypt.compare(password, user.password_hash);
-      if (!validPassword) {
-        return res.status(401).json({ success: false, error: 'Invalid credentials' });
-      }
-
-      // Generate JWT token
-      const token = jwt.sign(
-        { 
-          userId: user.id, 
-          email: user.email,
-          subscriptionStatus: user.subscription_status 
-        },
-        JWT_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      res.json({
-        success: true,
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          subscriptionStatus: user.subscription_status,
-          queryCount: user.query_count
-        }
-      });
     });
 
   } catch (error) {
@@ -161,12 +162,11 @@ router.post('/login', async (req, res) => {
 
 // Get user profile
 router.get('/profile', authenticateToken, (req, res) => {
-  db.get('SELECT * FROM users WHERE id = ?', [req.user.userId], (err, user) => {
-    if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ success: false, error: 'Database error' });
-    }
-
+  try {
+    // Reload users from file
+    users = loadUsers();
+    
+    const user = users.find(u => u.id === req.user.userId);
     if (!user) {
       return res.status(404).json({ success: false, error: 'User not found' });
     }
@@ -176,12 +176,16 @@ router.get('/profile', authenticateToken, (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        subscriptionStatus: user.subscription_status,
-        queryCount: user.query_count,
-        createdAt: user.created_at
+        subscriptionStatus: user.subscriptionStatus,
+        queryCount: user.queryCount,
+        createdAt: user.createdAt
       }
     });
-  });
+
+  } catch (error) {
+    console.error('Profile error:', error);
+    res.status(500).json({ success: false, error: 'Failed to get profile' });
+  }
 });
 
 // Middleware to authenticate JWT token
@@ -204,58 +208,48 @@ function authenticateToken(req, res, next) {
 
 // Middleware to check subscription status
 function requireSubscription(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  authenticateToken(req, res, (err) => {
+    if (err) return;
 
-  if (!token) {
-    return res.status(401).json({ success: false, error: 'Access token required' });
-  }
-
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ success: false, error: 'Invalid or expired token' });
+    // Reload users from file
+    users = loadUsers();
+    
+    const user = users.find(u => u.id === req.user.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
     }
 
-    req.user = decoded;
-
-    // Get fresh user data from database
-    db.get('SELECT * FROM users WHERE id = ?', [decoded.userId], (err, user) => {
-      if (err || !user) {
-        return res.status(404).json({ success: false, error: 'User not found' });
+    // Check if free user has exceeded query limit
+    if (user.subscriptionStatus === 'free') {
+      // Reset query count if it's a new day
+      const today = new Date().toDateString();
+      const lastReset = new Date(user.lastQueryReset).toDateString();
+      
+      if (today !== lastReset) {
+        user.queryCount = 0;
+        user.lastQueryReset = new Date();
+        saveUsers(users); // PERSIST CHANGES
       }
 
-      // Check if free user has exceeded query limit
-      if (user.subscription_status === 'free') {
-        const today = new Date().toDateString();
-        const lastReset = new Date(user.last_query_reset).toDateString();
-        
-        if (today !== lastReset) {
-          // Reset query count for new day
-          db.run(
-            'UPDATE users SET query_count = 0, last_query_reset = CURRENT_TIMESTAMP WHERE id = ?',
-            [user.id]
-          );
-          user.query_count = 0;
-        }
-
-        // Check free tier limit (5 queries per day)
-        if (user.query_count >= 5) {
-          return res.status(403).json({ 
-            success: false, 
-            error: 'Free tier limit reached. Upgrade to Pro for unlimited access.',
-            upgradeRequired: true
-          });
-        }
-
-        // Increment query count
-        db.run('UPDATE users SET query_count = query_count + 1 WHERE id = ?', [user.id]);
+      // Check free tier limit (5 queries per day)
+      if (user.queryCount >= 5) {
+        return res.status(403).json({ 
+          success: false, 
+          error: 'Free tier limit reached. Upgrade to Pro for unlimited access.',
+          upgradeRequired: true
+        });
       }
 
-      next();
-    });
+      // Increment query count
+      user.queryCount++;
+      saveUsers(users); // PERSIST CHANGES
+    }
+
+    next();
   });
 }
 
+// Export middleware functions
 module.exports = router;
 module.exports.authenticateToken = authenticateToken;
 module.exports.requireSubscription = requireSubscription;
