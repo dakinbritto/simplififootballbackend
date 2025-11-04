@@ -25,10 +25,11 @@ app.get("/", function(req, res) {
 
 // For Vercel deployment
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, function() {
+  app.listen(PORT, '0.0.0.0', function() {
     console.log("Server running on port " + PORT);
-  });
+});
 }
 
 // Export for Vercel
 module.exports = app;
+
