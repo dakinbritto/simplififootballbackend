@@ -1,0 +1,216 @@
+﻿matchid,Round,Date,Location,league,Home Team,Away Team,final score
+216,18,01/12/2025 00:00,21:00:00,championship,Birmingham,Watford,4
+217,19,05/12/2025 00:00,21:00:00,championship,Hull,Middlesbrough,2
+218,19,06/12/2025 00:00,13:30:00,championship,Charlton,Portsmouth,5
+219,19,06/12/2025 00:00,13:30:00,championship,Derby,Leicester,3
+220,19,06/12/2025 00:00,13:30:00,championship,Watford,Norwich,3
+221,19,06/12/2025 00:00,16:00:00,championship,Blackburn,Sheffield Weds,3
+222,19,06/12/2025 00:00,16:00:00,championship,Bristol City,Millwall,3
+223,19,06/12/2025 00:00,16:00:00,championship,Ipswich,Coventry,2
+224,19,06/12/2025 00:00,16:00:00,championship,Preston,Wrexham,3
+225,19,06/12/2025 00:00,16:00:00,championship,QPR,West Brom,5
+226,19,06/12/2025 00:00,16:00:00,championship,Sheffield United,Stoke,3
+227,19,06/12/2025 00:00,16:00:00,championship,Southampton,Birmingham,4
+228,19,06/12/2025 00:00,16:00:00,championship,Swansea,Oxford,3
+229,20,09/12/2025 00:00,20:45:00,championship,Blackburn,Oxford,4
+230,20,09/12/2025 00:00,20:45:00,championship,Charlton,Middlesbrough,3
+231,20,09/12/2025 00:00,20:45:00,championship,Preston,Coventry,3
+232,20,09/12/2025 00:00,20:45:00,championship,Sheffield United,Norwich,2
+233,20,09/12/2025 00:00,20:45:00,championship,Southampton,West Brom,4
+234,20,09/12/2025 00:00,20:45:00,championship,Swansea,Portsmouth,3
+235,20,09/12/2025 00:00,20:45:00,championship,Watford,Sheffield Weds,3
+236,20,09/12/2025 00:00,21:00:00,championship,QPR,Birmingham,5
+237,20,10/12/2025 00:00,20:45:00,championship,Bristol City,Leicester,3
+238,20,10/12/2025 00:00,20:45:00,championship,Derby,Millwall,2
+239,20,10/12/2025 00:00,20:45:00,championship,Ipswich,Stoke,3
+240,20,10/12/2025 00:00,21:00:00,championship,Hull,Wrexham,4
+241,21,12/12/2025 00:00,21:00:00,championship,West Brom,Sheffield United,5
+242,21,13/12/2025 00:00,13:30:00,championship,Norwich,Southampton,4
+243,21,13/12/2025 00:00,13:30:00,championship,Oxford,Preston,4
+244,21,13/12/2025 00:00,13:30:00,championship,Stoke,Swansea,2
+245,21,13/12/2025 00:00,16:00:00,championship,Birmingham,Charlton,4
+246,21,13/12/2025 00:00,16:00:00,championship,Coventry,Bristol City,3
+247,21,13/12/2025 00:00,16:00:00,championship,Leicester,Ipswich,4
+248,21,13/12/2025 00:00,16:00:00,championship,Middlesbrough,QPR,3
+249,21,13/12/2025 00:00,16:00:00,championship,Millwall,Hull,3
+250,21,13/12/2025 00:00,16:00:00,championship,Portsmouth,Blackburn,5
+251,21,13/12/2025 00:00,16:00:00,championship,Wrexham,Watford,4
+252,21,15/12/2025 00:00,21:00:00,championship,Sheffield Weds,Derby,3
+253,22,19/12/2025 00:00,21:00:00,championship,Swansea,Wrexham,4
+254,22,20/12/2025 00:00,13:30:00,championship,Blackburn,Millwall,2
+255,22,20/12/2025 00:00,13:30:00,championship,Preston,Norwich,3
+256,22,20/12/2025 00:00,13:30:00,championship,Southampton,Coventry,2
+257,22,20/12/2025 00:00,16:00:00,championship,Bristol City,Middlesbrough,3
+258,22,20/12/2025 00:00,16:00:00,championship,Charlton,Oxford,5
+259,22,20/12/2025 00:00,16:00:00,championship,Derby,Portsmouth,3
+260,22,20/12/2025 00:00,16:00:00,championship,Hull,West Brom,4
+261,22,20/12/2025 00:00,16:00:00,championship,Ipswich,Sheffield Weds,2
+262,22,20/12/2025 00:00,16:00:00,championship,QPR,Leicester,5
+263,22,20/12/2025 00:00,16:00:00,championship,Sheffield United,Birmingham,5
+264,22,20/12/2025 00:00,16:00:00,championship,Watford,Stoke,3
+265,23,26/12/2025 00:00,13:30:00,championship,Birmingham,Derby,5
+266,23,26/12/2025 00:00,14:00:00,championship,Millwall,Ipswich,3
+267,23,26/12/2025 00:00,16:00:00,championship,Coventry,Swansea,2
+268,23,26/12/2025 00:00,16:00:00,championship,Leicester,Watford,5
+269,23,26/12/2025 00:00,16:00:00,championship,Middlesbrough,Blackburn,3
+270,23,26/12/2025 00:00,16:00:00,championship,Norwich,Charlton,4
+271,23,26/12/2025 00:00,16:00:00,championship,Oxford,Southampton,5
+272,23,26/12/2025 00:00,16:00:00,championship,Portsmouth,QPR,5
+273,23,26/12/2025 00:00,16:00:00,championship,Sheffield Weds,Hull,4
+274,23,26/12/2025 00:00,16:00:00,championship,Stoke,Preston,3
+275,23,26/12/2025 00:00,16:00:00,championship,West Brom,Bristol City,4
+276,23,26/12/2025 00:00,18:30:00,championship,Wrexham,Sheffield United,4
+277,24,29/12/2025 00:00,19:00:00,championship,Coventry,Ipswich,4
+278,24,29/12/2025 00:00,20:45:00,championship,Leicester,Derby,4
+279,24,29/12/2025 00:00,20:45:00,championship,Middlesbrough,Hull,3
+280,24,29/12/2025 00:00,20:45:00,championship,Millwall,Bristol City,3
+281,24,29/12/2025 00:00,20:45:00,championship,Norwich,Watford,4
+282,24,29/12/2025 00:00,20:45:00,championship,Oxford,Swansea,4
+283,24,29/12/2025 00:00,20:45:00,championship,Portsmouth,Charlton,5
+284,24,29/12/2025 00:00,20:45:00,championship,Sheffield Weds,Blackburn,4
+285,24,29/12/2025 00:00,20:45:00,championship,Stoke,Sheffield United,2
+286,24,29/12/2025 00:00,20:45:00,championship,West Brom,QPR,5
+287,24,29/12/2025 00:00,20:45:00,championship,Wrexham,Preston,4
+288,24,29/12/2025 00:00,21:15:00,championship,Birmingham,Southampton,5
+289,25,01/01/2026 00:00,13:30:00,championship,Blackburn,Wrexham,4
+290,25,01/01/2026 00:00,16:00:00,championship,Bristol City,Portsmouth,3
+291,25,01/01/2026 00:00,16:00:00,championship,Charlton,Coventry,4
+292,25,01/01/2026 00:00,16:00:00,championship,Derby,Middlesbrough,2
+293,25,01/01/2026 00:00,16:00:00,championship,Hull,Stoke,3
+294,25,01/01/2026 00:00,16:00:00,championship,Ipswich,Oxford,2
+295,25,01/01/2026 00:00,16:00:00,championship,Preston,Sheffield Weds,2
+296,25,01/01/2026 00:00,16:00:00,championship,QPR,Norwich,5
+297,25,01/01/2026 00:00,16:00:00,championship,Southampton,Millwall,2
+298,25,01/01/2026 00:00,16:00:00,championship,Swansea,West Brom,4
+299,25,01/01/2026 00:00,16:00:00,championship,Watford,Birmingham,5
+300,25,01/01/2026 00:00,18:30:00,championship,Sheffield United,Leicester,4
+683,14,03/12/2025 00:00,20:00:00,epl,Arsenal,Brentford,3
+684,14,03/12/2025 00:00,20:00:00,epl,Bournemouth,Everton,3
+685,14,03/12/2025 00:00,20:00:00,epl,Brighton,Aston Villa,3
+686,14,03/12/2025 00:00,20:00:00,epl,Burnley,Crystal Palace,4
+687,14,03/12/2025 00:00,20:00:00,epl,Fulham,Man City,3
+688,14,03/12/2025 00:00,20:00:00,epl,Leeds,Chelsea,3
+689,14,03/12/2025 00:00,20:00:00,epl,Liverpool,Sunderland,4
+690,14,03/12/2025 00:00,20:00:00,epl,Man United,West Ham,4
+691,14,03/12/2025 00:00,20:00:00,epl,Newcastle,Tottenham,4
+692,14,03/12/2025 00:00,20:00:00,epl,Wolves,Nott'm Forest,3
+693,15,06/12/2025 00:00,15:00:00,epl,Aston Villa,Arsenal,3
+694,15,06/12/2025 00:00,15:00:00,epl,Bournemouth,Chelsea,3
+695,15,06/12/2025 00:00,15:00:00,epl,Brighton,West Ham,2
+696,15,06/12/2025 00:00,15:00:00,epl,Everton,Nott'm Forest,5
+697,15,06/12/2025 00:00,15:00:00,epl,Fulham,Crystal Palace,4
+698,15,06/12/2025 00:00,15:00:00,epl,Leeds,Liverpool,4
+699,15,06/12/2025 00:00,15:00:00,epl,Man City,Sunderland,3
+700,15,06/12/2025 00:00,15:00:00,epl,Newcastle,Burnley,4
+701,15,06/12/2025 00:00,15:00:00,epl,Tottenham,Brentford,3
+702,15,06/12/2025 00:00,15:00:00,epl,Wolves,Man United,4
+703,16,13/12/2025 00:00,15:00:00,epl,Arsenal,Wolves,2
+704,16,13/12/2025 00:00,15:00:00,epl,Brentford,Leeds,4
+705,16,13/12/2025 00:00,15:00:00,epl,Burnley,Fulham,4
+706,16,13/12/2025 00:00,15:00:00,epl,Chelsea,Everton,4
+707,16,13/12/2025 00:00,15:00:00,epl,Crystal Palace,Man City,3
+708,16,13/12/2025 00:00,15:00:00,epl,Liverpool,Brighton,4
+709,16,13/12/2025 00:00,15:00:00,epl,Man United,Bournemouth,3
+710,16,13/12/2025 00:00,15:00:00,epl,Nott'm Forest,Tottenham,4
+711,16,13/12/2025 00:00,15:00:00,epl,Sunderland,Newcastle,4
+712,16,13/12/2025 00:00,15:00:00,epl,West Ham,Aston Villa,3
+713,17,20/12/2025 00:00,15:00:00,epl,Aston Villa,Man United,2
+714,17,20/12/2025 00:00,15:00:00,epl,Bournemouth,Burnley,2
+715,17,20/12/2025 00:00,15:00:00,epl,Brighton,Sunderland,3
+716,17,20/12/2025 00:00,15:00:00,epl,Everton,Arsenal,4
+717,17,20/12/2025 00:00,15:00:00,epl,Fulham,Nott'm Forest,5
+718,17,20/12/2025 00:00,15:00:00,epl,Leeds,Crystal Palace,3
+719,17,20/12/2025 00:00,15:00:00,epl,Man City,West Ham,2
+720,17,20/12/2025 00:00,15:00:00,epl,Newcastle,Chelsea,4
+721,17,20/12/2025 00:00,15:00:00,epl,Tottenham,Liverpool,3
+722,17,20/12/2025 00:00,15:00:00,epl,Wolves,Brentford,4
+723,18,27/12/2025 00:00,15:00:00,epl,Arsenal,Brighton,3
+724,18,27/12/2025 00:00,15:00:00,epl,Brentford,Bournemouth,3
+725,18,27/12/2025 00:00,15:00:00,epl,Burnley,Everton,5
+726,18,27/12/2025 00:00,15:00:00,epl,Chelsea,Aston Villa,3
+727,18,27/12/2025 00:00,15:00:00,epl,Crystal Palace,Tottenham,2
+728,18,27/12/2025 00:00,15:00:00,epl,Liverpool,Wolves,4
+729,18,27/12/2025 00:00,15:00:00,epl,Man United,Newcastle,4
+730,18,27/12/2025 00:00,15:00:00,epl,Nott'm Forest,Man City,4
+731,18,27/12/2025 00:00,15:00:00,epl,Sunderland,Leeds,4
+732,18,27/12/2025 00:00,15:00:00,epl,West Ham,Fulham,4
+733,19,30/12/2025 00:00,20:00:00,epl,Arsenal,Aston Villa,3
+734,19,30/12/2025 00:00,20:00:00,epl,Brentford,Tottenham,4
+735,19,30/12/2025 00:00,20:00:00,epl,Burnley,Newcastle,4
+736,19,30/12/2025 00:00,20:00:00,epl,Chelsea,Bournemouth,2
+737,19,30/12/2025 00:00,20:00:00,epl,Crystal Palace,Fulham,3
+738,19,30/12/2025 00:00,20:00:00,epl,Liverpool,Leeds,4
+739,19,30/12/2025 00:00,20:00:00,epl,Man United,Wolves,4
+740,19,30/12/2025 00:00,20:00:00,epl,Nott'm Forest,Everton,5
+741,19,30/12/2025 00:00,20:00:00,epl,Sunderland,Man City,4
+742,19,30/12/2025 00:00,20:00:00,epl,West Ham,Brighton,3
+1063,14,07/12/2025 00:00,15:00:00,seria a,Cagliari,Roma,3
+1064,14,07/12/2025 00:00,15:00:00,seria a,Cremonese,Lecce,4
+1065,14,07/12/2025 00:00,15:00:00,seria a,Inter,Como,3
+1066,14,07/12/2025 00:00,15:00:00,seria a,Lazio,Bologna,4
+1067,14,07/12/2025 00:00,15:00:00,seria a,Napoli,Juventus,3
+1068,14,07/12/2025 00:00,15:00:00,seria a,Pisa,Parma,3
+1069,14,07/12/2025 00:00,15:00:00,seria a,Sassuolo,Fiorentina,3
+1070,14,07/12/2025 00:00,15:00:00,seria a,Torino,Milan,3
+1071,14,07/12/2025 00:00,15:00:00,seria a,Udinese,Genoa,4
+1072,14,07/12/2025 00:00,15:00:00,seria a,Verona,Atalanta,4
+1073,15,14/12/2025 00:00,15:00:00,seria a,Atalanta,Cagliari,4
+1074,15,14/12/2025 00:00,15:00:00,seria a,Bologna,Juventus,4
+1075,15,14/12/2025 00:00,15:00:00,seria a,Fiorentina,Verona,3
+1076,15,14/12/2025 00:00,15:00:00,seria a,Genoa,Inter,4
+1077,15,14/12/2025 00:00,15:00:00,seria a,Lecce,Pisa,3
+1078,15,14/12/2025 00:00,15:00:00,seria a,Milan,Sassuolo,3
+1079,15,14/12/2025 00:00,15:00:00,seria a,Parma,Lazio,3
+1080,15,14/12/2025 00:00,15:00:00,seria a,Roma,Como,3
+1081,15,14/12/2025 00:00,15:00:00,seria a,Torino,Cremonese,5
+1082,15,14/12/2025 00:00,15:00:00,seria a,Udinese,Napoli,3
+1083,16,21/12/2025 00:00,15:00:00,seria a,Cagliari,Pisa,4
+1084,16,21/12/2025 00:00,15:00:00,seria a,Como,Milan,3
+1085,16,21/12/2025 00:00,15:00:00,seria a,Fiorentina,Udinese,4
+1086,16,21/12/2025 00:00,15:00:00,seria a,Genoa,Atalanta,3
+1087,16,21/12/2025 00:00,15:00:00,seria a,Inter,Lecce,3
+1088,16,21/12/2025 00:00,15:00:00,seria a,Juventus,Roma,3
+1089,16,21/12/2025 00:00,15:00:00,seria a,Lazio,Cremonese,4
+1090,16,21/12/2025 00:00,15:00:00,seria a,Napoli,Parma,2
+1091,16,21/12/2025 00:00,15:00:00,seria a,Sassuolo,Torino,3
+1092,16,21/12/2025 00:00,15:00:00,seria a,Verona,Bologna,3
+1093,17,28/12/2025 00:00,15:00:00,seria a,Bologna,Sassuolo,3
+1094,17,28/12/2025 00:00,15:00:00,seria a,Cremonese,Napoli,3
+1095,17,28/12/2025 00:00,15:00:00,seria a,Lecce,Como,3
+1096,17,28/12/2025 00:00,15:00:00,seria a,Milan,Verona,1
+1097,17,28/12/2025 00:00,15:00:00,seria a,Parma,Fiorentina,3
+1098,17,28/12/2025 00:00,15:00:00,seria a,Pisa,Juventus,4
+1099,17,28/12/2025 00:00,15:00:00,seria a,Roma,Genoa,1
+1100,17,28/12/2025 00:00,15:00:00,seria a,Torino,Cagliari,5
+1101,17,28/12/2025 00:00,15:00:00,seria a,Udinese,Lazio,4
+1102,17,28/12/2025 00:00,15:00:00,seria a,Atalanta,Inter,3
+1453,15,07/12/2025 00:00,21:00:00,la liga,Alaves,Sociedad,4
+1454,15,07/12/2025 00:00,21:00:00,la liga,Ath Bilbao,Ath Madrid,3
+1455,15,07/12/2025 00:00,21:00:00,la liga,Elche,Girona,5
+1456,15,07/12/2025 00:00,21:00:00,la liga,Espanol,Vallecano,3
+1457,15,07/12/2025 00:00,21:00:00,la liga,Betis,Barcelona,2
+1458,15,07/12/2025 00:00,21:00:00,la liga,Real Madrid,Celta,2
+1459,15,07/12/2025 00:00,21:00:00,la liga,Villarreal,Getafe,3
+1460,15,07/12/2025 00:00,21:00:00,la liga,Osasuna,Levante,4
+1461,15,07/12/2025 00:00,21:00:00,la liga,Oviedo,Mallorca,4
+1462,15,07/12/2025 00:00,21:00:00,la liga,Valencia,Sevilla,5
+1463,16,14/12/2025 00:00,21:00:00,la liga,Alaves,Real Madrid,3
+1464,16,14/12/2025 00:00,21:00:00,la liga,Ath Madrid,Valencia,2
+1465,16,14/12/2025 00:00,21:00:00,la liga,Barcelona,Osasuna,1
+1466,16,14/12/2025 00:00,21:00:00,la liga,Levante,Villarreal,2
+1467,16,14/12/2025 00:00,21:00:00,la liga,Celta,Ath Bilbao,3
+1468,16,14/12/2025 00:00,21:00:00,la liga,Vallecano,Betis,4
+1469,16,14/12/2025 00:00,21:00:00,la liga,Mallorca,Elche,5
+1470,16,14/12/2025 00:00,21:00:00,la liga,Getafe,Espanol,4
+1471,16,14/12/2025 00:00,21:00:00,la liga,Sociedad,Girona,4
+1472,16,14/12/2025 00:00,21:00:00,la liga,Sevilla,Oviedo,4
+1473,17,21/12/2025 00:00,21:00:00,la liga,Ath Bilbao,Espanol,3
+1474,17,21/12/2025 00:00,21:00:00,la liga,Betis,Getafe,3
+1475,17,21/12/2025 00:00,21:00:00,la liga,Elche,Vallecano,4
+1476,17,21/12/2025 00:00,21:00:00,la liga,Levante,Sociedad,4
+1477,17,21/12/2025 00:00,21:00:00,la liga,Real Madrid,Sevilla,3
+1478,17,21/12/2025 00:00,21:00:00,la liga,Osasuna,Alaves,4
+1479,17,21/12/2025 00:00,21:00:00,la liga,Girona,Ath Madrid,3
+1480,17,21/12/2025 00:00,21:00:00,la liga,Villarreal,Barcelona,1
+1481,17,21/12/2025 00:00,21:00:00,la liga,Oviedo,Celta,5
+1482,17,21/12/2025 00:00,21:00:00,la liga,Valencia,Mallorca,4
