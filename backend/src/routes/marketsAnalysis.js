@@ -8,7 +8,6 @@ function calculateMarketStats(data, strategy, league) {
   const startingCapital = 1000;
   const stakePercentage = 5;
   const stakeAmount = (startingCapital * stakePercentage) / 100;
-
   let wins = 0;
   let losses = 0;
   let totalReturn = 0;
@@ -28,11 +27,9 @@ function calculateMarketStats(data, strategy, league) {
   sortedData.forEach(game => {
     const totalGoals = getTotalGoals(game);
     if (isNaN(totalGoals)) return;
-
     validGames++;
     let isWin = false;
     let profit = 0;
-
     if (strategy === 'over') {
       isWin = totalGoals > 2;
       if (isWin) {
@@ -52,7 +49,6 @@ function calculateMarketStats(data, strategy, league) {
         losses++;
       }
     }
-
     totalReturn += profit;
     runningCapital += profit;
   });
@@ -81,13 +77,84 @@ function getTotalGoals(row) {
   return home + away;
 }
 
+// NEW FUNCTION: Under 6 Goals market calculation with grouping logic
+function calculateUnder6MarketStats(data, league) {
+  const startingCapital = 1000;
+  const stakePercentage = 5;
+  const stakeAmount = (startingCapital * stakePercentage) / 100;
+  
+  let wins = 0;
+  let losses = 0;
+  let totalReturn = 0;
+  let runningCapital = startingCapital;
+  let totalTrades = 0;
+
+  const sortedData = data
+    .map(row => ({
+      ...row,
+      tradeNumber: parseInt(row.Trade.replace('t', '')) || 0
+    }))
+    .filter(row => row.tradeNumber > 0)
+    .sort((a, b) => a.tradeNumber - b.tradeNumber);
+
+  // Group fixtures into sets of 3 games
+  for (let i = 0; i < sortedData.length; i += 3) {
+    const group = sortedData.slice(i, i + 3);
+    
+    // Only process complete groups of 3
+    if (group.length === 3) {
+      totalTrades++;
+      
+      // Check if ALL 3 fixtures are under 6 goals
+      let allUnder6 = true;
+      for (const game of group) {
+        const totalGoals = getTotalGoals(game);
+        if (isNaN(totalGoals) || totalGoals >= 6) {
+          allUnder6 = false;
+          break;
+        }
+      }
+
+      const odds = parseFloat(group[0].odd3) || 1.05; // Use odd3 column
+      let profit = 0;
+
+      if (allUnder6) {
+        profit = stakeAmount * (odds - 1);
+        wins++;
+      } else {
+        profit = -stakeAmount;
+        losses++;
+      }
+
+      totalReturn += profit;
+      runningCapital += profit;
+    }
+  }
+
+  const winRate = (wins + losses) > 0 ? (wins / (wins + losses)) * 100 : 0;
+  const roi = ((totalReturn / startingCapital) * 100);
+  
+  return {
+    id: `${league}-under6`,
+    league,
+    strategy: 'under6',
+    wins,
+    losses,
+    totalGames: totalTrades, // For Under 6, this is number of trades
+    winRate,
+    roi,
+    income: totalReturn,
+    finalCapital: runningCapital
+  };
+}
+
 // Secure endpoint for all markets analysis
 router.get('/all', async (req, res) => {
   try {
     const csvPath = path.join(__dirname, '../../data/MAINRAW.csv');
     const csvText = fs.readFileSync(csvPath, 'utf8');
     
-    // Parse CSV securely server-side
+    // Parse CSV securely server-side - UPDATED to include odd3 column
     const csvData = csvText.split('\n').slice(1).map(line => {
       const cols = line.split(',');
       return {
@@ -97,6 +164,7 @@ router.get('/all', async (req, res) => {
         FTAG: cols[8],
         odd: cols[11],
         odd2: cols[13],
+        odd3: cols[14],  // ADDED: Under 6 odds column
         Season: cols[0]
       };
     }).filter(row => row.League);
@@ -104,7 +172,7 @@ router.get('/all', async (req, res) => {
     const markets = [];
     const leagues = [...new Set(csvData.map(row => row.League))].filter(Boolean);
     
-    // Process each league's markets securely
+    // Process each league's markets securely - UPDATED to include Under 6
     leagues.forEach(league => {
       const leagueData = csvData.filter(row => row.League === league);
       
@@ -113,6 +181,10 @@ router.get('/all', async (req, res) => {
       
       const underMarket = calculateMarketStats(leagueData, 'under', league);
       if (underMarket.totalGames > 0) markets.push(underMarket);
+      
+      // NEW: Under 6 market calculation
+      const under6Market = calculateUnder6MarketStats(leagueData, league);
+      if (under6Market.totalGames > 0) markets.push(under6Market);
     });
 
     res.json({
